@@ -110,7 +110,7 @@ public class SQLite extends Database {
 					return result;
 					
 				default:
-					statement.executeQuery(query);
+					statement.execute(query);
 					return result;	
 			}
 		} catch (SQLException ex) {
@@ -164,9 +164,15 @@ public class SQLite extends Database {
 			dbm = this.open().getMetaData();
 			ResultSet tables = dbm.getTables(null, null, table, null);
 			if (tables.next())
+			{
+			  tables.close();
 			  return true;
+			}
 			else
+			{
+			  tables.close();	
 			  return false;
+			}
 		} catch (SQLException e) {
 			this.writeError("Failed to check if table \"" + table + "\" exists: " + e.getMessage(), true);
 			return false;
