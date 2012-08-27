@@ -90,11 +90,13 @@ public class BookShelf extends JavaPlugin{
 						if(r.getInt("bool") == 1)
 						{
 							r.close();
+							p.sendMessage("The bookshelf you are looking at is now unlocked.");
 							mysql.query("UPDATE copy SET bool=0 WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
 						}
 						else
 						{
 							r.close();
+							p.sendMessage("The bookshelf you are looking at is now locked.");
 							mysql.query("UPDATE copy SET bool=1 WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
 						}
 					} catch (SQLException e) {
