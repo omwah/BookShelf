@@ -85,17 +85,17 @@ public class BookShelf extends JavaPlugin{
 				Location loc = p.getTargetBlock(null, 10).getLocation();
 				if(loc.getBlock().getType() == Material.BOOKSHELF)
 				{
-					ResultSet r = mysql.query("SELECT * FROM copy WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
+					ResultSet re = mysql.query("SELECT * FROM copy WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
 					try {
-						if(r.getInt("bool") == 1)
+						if(re.getInt("bool") == 1)
 						{
-							r.close();
+							re.close();
 							p.sendMessage("The bookshelf you are looking at is now limited.");
 							mysql.query("UPDATE copy SET bool=0 WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
 						}
 						else
 						{
-							r.close();
+							re.close();
 							p.sendMessage("The bookshelf you are looking at is now unlimited.");
 							mysql.query("UPDATE copy SET bool=1 WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
 						}
