@@ -57,7 +57,7 @@ public class BookListener implements Listener {
 		{
 			if(j.getClickedBlock().getType() == Material.BOOKSHELF && j.getAction() == Action.RIGHT_CLICK_BLOCK)
 			{
-				plugin.getLogger().info("Clicked");
+				//plugin.getLogger().info("Clicked");
 				Location loc = j.getClickedBlock().getLocation();
 				if(j.getBlockFace() == BlockFace.NORTH || j.getBlockFace() == BlockFace.EAST || j.getBlockFace() == BlockFace.SOUTH || j.getBlockFace() == BlockFace.WEST)
 				{
@@ -78,7 +78,7 @@ public class BookListener implements Listener {
 					}
 					if(!map.containsKey(j.getClickedBlock().getLocation()))
 					{
-						plugin.getLogger().info("not had");
+						//plugin.getLogger().info("not had");
 						Inventory inv = Bukkit.createInventory(p, plugin.getConfig().getInt("rows")*9, plugin.getConfig().getString("shelf_title"));
 						//inv.setMaxStackSize(1);
 						Block cl = j.getClickedBlock();
@@ -166,7 +166,7 @@ public class BookListener implements Listener {
 					}
 					else
 					{
-						plugin.getLogger().info("had");
+						//plugin.getLogger().info("had");
 						Inventory inv = map2.get(j.getClickedBlock().getLocation());
 						Player player = (Player) inv.getHolder();
 						if(player.getName() == p.getName())
@@ -232,7 +232,7 @@ public class BookListener implements Listener {
 								if(map3.get(loc))
 								{
 									BookShelf.mysql.query("DELETE FROM items WHERE x=" + x + " AND y=" + y + " AND z=" + z + ";");
-									plugin.getLogger().info("Deleted");
+									//plugin.getLogger().info("Deleted");
 									for(int i=0;i<cont.length;i++)
 									{
 										if(cont[i] != null)
@@ -395,6 +395,17 @@ public class BookListener implements Listener {
 					return;
 				}
 			}
+			else
+			{
+				if(j.getCurrentItem().getType() == Material.BOOK)
+				{
+					return;
+				}
+				else if(j.getCursor().getType() == Material.BOOK)
+				{
+					return;
+				}
+			}
 			if(plugin.getConfig().getBoolean("permissions.allow_book_and_quill") == false || !Bukkit.getPlayer(j.getWhoClicked().getName()).hasPermission("bookshelf.baq"))
 			{
 				if(j.getCurrentItem().getType() == Material.BOOK_AND_QUILL)
@@ -405,6 +416,17 @@ public class BookListener implements Listener {
 				else if(j.getCursor().getType() == Material.BOOK_AND_QUILL)
 				{
 					j.setCancelled(true);
+					return;
+				}
+			}
+			else
+			{
+				if(j.getCurrentItem().getType() == Material.BOOK_AND_QUILL)
+				{
+					return;
+				}
+				else if(j.getCursor().getType() == Material.BOOK_AND_QUILL)
+				{
 					return;
 				}
 			}
@@ -423,8 +445,16 @@ public class BookListener implements Listener {
 			}
 			else
 			{
-				j.setCancelled(true);
+				if(j.getCurrentItem().getType() == Material.WRITTEN_BOOK)
+				{
+					return;
+				}
+				else if(j.getCursor().getType() == Material.WRITTEN_BOOK)
+				{
+					return;
+				}
 			}
+			j.setCancelled(true);
 		}
 	}
 	@EventHandler
