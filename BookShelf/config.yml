@@ -5,3 +5,8 @@
 #+----------------------------------------------------------+
 
 rows: 2
+
+permissions:
+    allow_book: true
+    allow_book_and_quill: true
+    allow_signed: true 
