@@ -6,7 +6,10 @@
 
 rows: 2
 
+shelf_title: "BookShelf"
+
 permissions:
     allow_book: true
     allow_book_and_quill: true
-    allow_signed: true 
+    allow_signed: true
+ 

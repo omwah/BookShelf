@@ -79,7 +79,7 @@ public class BookListener implements Listener {
 					if(!map.containsKey(j.getClickedBlock().getLocation()))
 					{
 						plugin.getLogger().info("not had");
-						Inventory inv = Bukkit.createInventory(p, plugin.getConfig().getInt("rows")*9, "BookShelf");
+						Inventory inv = Bukkit.createInventory(p, plugin.getConfig().getInt("rows")*9, plugin.getConfig().getString("shelf_title"));
 						//inv.setMaxStackSize(1);
 						Block cl = j.getClickedBlock();
 						int x = cl.getX();
@@ -376,7 +376,7 @@ public class BookListener implements Listener {
 	@EventHandler
 	public void onInv(InventoryClickEvent j)
 	{
-		if(j.getInventory().getTitle() == "BookShelf")
+		if(j.getInventory().getTitle() == plugin.getConfig().getString("shelf_title"))
 		{
 			if(j.getCurrentItem() == null)
 			{
