@@ -47,6 +47,7 @@ public class BookListener implements Listener {
     private String[] pages;
     HashMap<Location, InventoryHolder> map = new HashMap<Location, InventoryHolder>();
     HashMap<Location, Inventory> map2 = new HashMap<Location, Inventory>();
+    HashMap<Location, Boolean> map3 = new HashMap<Location, Boolean>();
     static ResultSet r;
 	@EventHandler
 	public void onClick(PlayerInteractEvent j)
@@ -152,6 +153,7 @@ public class BookListener implements Listener {
 								loca.clear();
 								amt.clear();
 								p.openInventory(inv);
+								map3.put(loc, true);
 							}
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -192,54 +194,6 @@ public class BookListener implements Listener {
 			int x = loc.getBlockX();
 			int y = loc.getBlockY();
 			int z = loc.getBlockZ();
-			r = BookShelf.mysql.query("SELECT * FROM copy WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
-			try {
-				if(r.getInt("bool") == 0)
-				{
-					r.close();
-					BookShelf.mysql.query("DELETE FROM items WHERE x=" + x + " AND y=" + y + " AND z=" + z + ";");
-					for(int i=0;i<cont.length;i++)
-					{
-						if(cont[i] != null)
-						{
-							if(cont[i].getType() == Material.BOOK_AND_QUILL || cont[i].getType() == Material.WRITTEN_BOOK)
-							{
-								Book(cont[i]);
-								String title = getTitle().replaceAll("'", "''");
-								String author = getAuthor().replaceAll("'", "''");
-								int type = cont[i].getTypeId(); 
-								if(cont[i].getType() == Material.BOOK_AND_QUILL)
-								{
-									BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+", 'null', 'null',"+type+","+i+",1);");
-								}
-								else
-								{
-									BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+",'"+author+"','"+title+"',"+type+","+i+",1);");	
-								}
-								int id = getidxyz(x,y,z);
-								BookShelf.mysql.query("DELETE FROM pages WHERE id="+id+";");
-								//plugin.getLogger().info("Length is "+getPages().length+" and id is "+id+" and 0 is "+getPages()[0]);
-								for(int k=0;k<getPages().length;k++)
-								{
-									BookShelf.mysql.query("INSERT INTO pages (id, text) VALUES ("+id+",'"+getPages()[k].replaceAll("'", "''")+"');");
-								}
-							}
-							else if(cont[i].getType() == Material.BOOK)
-							{
-								int type = cont[i].getTypeId(); 
-								BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+", 'null', 'null',"+type+","+i+","+cont[i].getAmount()+");");
-							}
-						}
-					}
-				}
-				else
-				{
-					r.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			if(j.getInventory().getHolder() instanceof Player)
 			{
 				//plugin.getLogger().info("yes");
@@ -258,6 +212,58 @@ public class BookListener implements Listener {
 					else
 					{
 						//plugin.getLogger().info("empty");
+						r = BookShelf.mysql.query("SELECT * FROM copy WHERE x="+loc.getX()+" AND y="+loc.getY()+" AND z="+loc.getZ()+";");
+						try {
+							if(r.getInt("bool") == 0)
+							{
+								r.close();
+								if(map3.get(loc))
+								{
+									BookShelf.mysql.query("DELETE FROM items WHERE x=" + x + " AND y=" + y + " AND z=" + z + ";");
+									for(int i=0;i<cont.length;i++)
+									{
+										if(cont[i] != null)
+										{
+											if(cont[i].getType() == Material.BOOK_AND_QUILL || cont[i].getType() == Material.WRITTEN_BOOK)
+											{
+												Book(cont[i]);
+												String title = getTitle().replaceAll("'", "''");
+												String author = getAuthor().replaceAll("'", "''");
+												int type = cont[i].getTypeId(); 
+												if(cont[i].getType() == Material.BOOK_AND_QUILL)
+												{
+													BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+", 'null', 'null',"+type+","+i+",1);");
+												}
+												else
+												{
+													BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+",'"+author+"','"+title+"',"+type+","+i+",1);");	
+												}
+												int id = getidxyz(x,y,z);
+												BookShelf.mysql.query("DELETE FROM pages WHERE id="+id+";");
+												//plugin.getLogger().info("Length is "+getPages().length+" and id is "+id+" and 0 is "+getPages()[0]);
+												for(int k=0;k<getPages().length;k++)
+												{
+													BookShelf.mysql.query("INSERT INTO pages (id, text) VALUES ("+id+",'"+getPages()[k].replaceAll("'", "''")+"');");
+												}
+											}
+											else if(cont[i].getType() == Material.BOOK)
+											{
+												int type = cont[i].getTypeId(); 
+												BookShelf.mysql.query("INSERT INTO items (x,y,z,author,title,type,loc,amt) VALUES ("+x+","+y+","+z+", 'null', 'null',"+type+","+i+","+cont[i].getAmount()+");");
+											}
+										}
+									}
+									map3.remove(loc);
+								}
+							}
+							else
+							{
+								r.close();
+							}
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						map2.remove(loc);
 					}
 				}
