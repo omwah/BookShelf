@@ -19,10 +19,10 @@ permissions:
         default: op
     bookshelf.book:
         description: Allows player to make bookshelf never stop giving books
-        default: op
+        default: true
     bookshelf.baq:
         description: Allows player to make bookshelf never stop giving books
-        default: op
+        default: true
     bookshelf.signed:
         description: Allows player to make bookshelf never stop giving books
-        default: op
+        default: true
