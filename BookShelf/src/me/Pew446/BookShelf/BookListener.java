@@ -57,6 +57,7 @@ public class BookListener implements Listener {
 		{
 			if(j.getClickedBlock().getType() == Material.BOOKSHELF && j.getAction() == Action.RIGHT_CLICK_BLOCK)
 			{
+				plugin.getLogger().info("Clicked");
 				Location loc = j.getClickedBlock().getLocation();
 				if(j.getBlockFace() == BlockFace.NORTH || j.getBlockFace() == BlockFace.EAST || j.getBlockFace() == BlockFace.SOUTH || j.getBlockFace() == BlockFace.WEST)
 				{
@@ -77,7 +78,7 @@ public class BookListener implements Listener {
 					}
 					if(!map.containsKey(j.getClickedBlock().getLocation()))
 					{
-						//plugin.getLogger().info("not had");
+						plugin.getLogger().info("not had");
 						Inventory inv = Bukkit.createInventory(p, plugin.getConfig().getInt("rows")*9, "BookShelf");
 						//inv.setMaxStackSize(1);
 						Block cl = j.getClickedBlock();
@@ -93,6 +94,8 @@ public class BookListener implements Listener {
 							{
 								r.close();
 								p.openInventory(inv);
+								if(!map3.containsKey(loc))
+									map3.put(loc, true);
 								return;
 							}
 							else
@@ -153,7 +156,8 @@ public class BookListener implements Listener {
 								loca.clear();
 								amt.clear();
 								p.openInventory(inv);
-								map3.put(loc, true);
+								if(!map3.containsKey(loc))
+									map3.put(loc, true);
 							}
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -162,9 +166,17 @@ public class BookListener implements Listener {
 					}
 					else
 					{
-						//plugin.getLogger().info("had");
+						plugin.getLogger().info("had");
 						Inventory inv = map2.get(j.getClickedBlock().getLocation());
-						p.openInventory(inv);
+						Player player = (Player) inv.getHolder();
+						if(player.getName() == p.getName())
+						{
+							j.setCancelled(true);
+						}
+						else
+						{
+							p.openInventory(inv);
+						}
 					}
 				}
 			}
@@ -220,6 +232,7 @@ public class BookListener implements Listener {
 								if(map3.get(loc))
 								{
 									BookShelf.mysql.query("DELETE FROM items WHERE x=" + x + " AND y=" + y + " AND z=" + z + ";");
+									plugin.getLogger().info("Deleted");
 									for(int i=0;i<cont.length;i++)
 									{
 										if(cont[i] != null)
@@ -369,13 +382,44 @@ public class BookListener implements Listener {
 			{
 				return;
 			}
-			if(j.getCurrentItem().getType() == Material.BOOK || j.getCurrentItem().getType() == Material.BOOK_AND_QUILL || j.getCurrentItem().getType() == Material.WRITTEN_BOOK)
+			if(plugin.getConfig().getBoolean("permissions.allow_book") == false || !Bukkit.getPlayer(j.getWhoClicked().getName()).hasPermission("bookshelf.book"))
 			{
-				return;
+				if(j.getCurrentItem().getType() == Material.BOOK)
+				{
+					j.setCancelled(true);
+					return;
+				}
+				else if(j.getCursor().getType() == Material.BOOK)
+				{
+					j.setCancelled(true);
+					return;
+				}
 			}
-			else if(j.getCursor().getType() == Material.BOOK || j.getCursor().getType() == Material.BOOK_AND_QUILL || j.getCursor().getType() == Material.WRITTEN_BOOK)
+			if(plugin.getConfig().getBoolean("permissions.allow_book_and_quill") == false || !Bukkit.getPlayer(j.getWhoClicked().getName()).hasPermission("bookshelf.baq"))
 			{
-				return;
+				if(j.getCurrentItem().getType() == Material.BOOK_AND_QUILL)
+				{
+					j.setCancelled(true);
+					return;
+				}
+				else if(j.getCursor().getType() == Material.BOOK_AND_QUILL)
+				{
+					j.setCancelled(true);
+					return;
+				}
+			}
+			if(plugin.getConfig().getBoolean("permissions.allow_signed") == false || !Bukkit.getPlayer(j.getWhoClicked().getName()).hasPermission("bookshelf.signed"))
+			{
+				if(j.getCurrentItem().getType() == Material.WRITTEN_BOOK)
+				{
+					j.setCancelled(true);
+					return;
+				}
+				else if(j.getCursor().getType() == Material.WRITTEN_BOOK)
+				{
+					j.setCancelled(true);
+					return;
+				}
 			}
 			else
 			{
